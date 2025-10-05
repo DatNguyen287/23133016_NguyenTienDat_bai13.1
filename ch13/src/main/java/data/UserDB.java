@@ -9,20 +9,21 @@ import model.User;
 
 public class UserDB {
 
-    public static void insert(User user) {
-        EntityManager em = DBUtil.getEmFactory().createEntityManager();
-        EntityTransaction trans = em.getTransaction();
-        trans.begin();        
-        try {
-            em.persist(user);
-            trans.commit();
-        } catch (Exception e) {
-            System.out.println(e);
-            trans.rollback();
-        } finally {
-            em.close();
-        }
-    }
+	public static void insert(User user) {
+	    EntityManager em = DBUtil.getEmFactory().createEntityManager();
+	    EntityTransaction trans = em.getTransaction();
+	    try {
+	        trans.begin(); // ✅ Đặt trong try
+	        em.persist(user);
+	        trans.commit();
+	    } catch (Exception e) {
+	        System.out.println("Insert error: " + e.getMessage());
+	        if (trans.isActive()) trans.rollback(); // tránh rollback khi chưa begin
+	    } finally {
+	        em.close();
+	    }
+	}
+
 
     public static void update(User user) {
         EntityManager em = DBUtil.getEmFactory().createEntityManager();
